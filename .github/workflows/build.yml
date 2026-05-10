@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Compile DLL
       shell: cmd
@@ -15,7 +15,7 @@ jobs:
         "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /target:library /optimize+ /out:NBC2025Plugin.dll /reference:ETABSv1.dll /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Drawing.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll" NBC2025PluginSingle.cs
 
     - name: Upload DLL
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: NBC2025Plugin-DLL
         path: NBC2025Plugin.dll
