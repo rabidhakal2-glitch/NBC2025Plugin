@@ -8,23 +8,6 @@ namespace NBC2025Plugin
     {
         private cSapModel _m;
 
-        [STAThread]
-        public static void Main(string[] args)
-        {
-            try
-            {
-                cHelper helper = new Helper();
-                cOAPI oapi = helper.GetObject("CSI.ETABS.API.ETABSObject");
-                cSapModel sapModel = oapi.SapModel;
-                var plugin = new NBC2025Plugin();
-                plugin.Run(sapModel);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Could not connect to ETABS 19. Make sure ETABS 19 is open. Error: " + ex.Message, "NBC 2025 - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         public void Run(cSapModel SapModel)
         {
             _m = SapModel;
@@ -91,7 +74,6 @@ namespace NBC2025Plugin
                 msg += "BASE SHEAR" + nl;
                 msg += "V_ULS = " + VULS.ToString("F1") + " kN" + nl;
                 msg += "V_SLS = " + VSLS.ToString("F1") + " kN" + nl + nl;
-                msg += "CREATED IN ETABS" + nl;
                 msg += "Patterns : EQX EQY EQX_SLS EQY_SLS" + nl;
                 msg += "Combos   : 40 combinations" + nl + nl;
                 msg += "Please re-run analysis.";
@@ -292,121 +274,4 @@ namespace NBC2025Plugin
             ok.Width        = 200;
             ok.Height       = 30;
             ok.BackColor    = System.Drawing.Color.FromArgb(26,79,114);
-            ok.ForeColor    = System.Drawing.Color.White;
-            ok.FlatStyle    = FlatStyle.Flat;
-            ok.Font         = new System.Drawing.Font("Segoe UI",9f,System.Drawing.FontStyle.Bold);
-
-            Button cn = new Button();
-            cn.Text         = "Cancel";
-            cn.DialogResult = DialogResult.Cancel;
-            cn.Location     = new System.Drawing.Point(210,y);
-            cn.Width        = 80;
-            cn.Height       = 30;
-            cn.FlatStyle    = FlatStyle.Flat;
-
-            pnl.Controls.Add(ok);
-            pnl.Controls.Add(cn);
-            AcceptButton = ok;
-            CancelButton = cn;
-        }
-
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            if (DialogResult == DialogResult.OK)
-            {
-                H        = (double)nudH.Value;
-                kt       = (double)nudkt.Value;
-                Z        = (double)nudZ.Value;
-                I        = (double)nudI.Value;
-                Rmu      = (double)nudRmu.Value;
-                OmegaU   = (double)nudOmegaU.Value;
-                OmegaS   = (double)nudOmegaS.Value;
-                W        = (double)nudW.Value;
-                NStory   = (int)nudNStory.Value;
-                string[] ss = new string[]{"A","B","C","D"};
-                Soil     = ss[Math.Min(cbSoil.SelectedIndex,3)];
-                Dead     = tbDead.Text.Trim();
-                SDL      = tbSDL.Text.Trim();
-                Live     = tbLive.Text.Trim();
-                RoofLive = tbRL.Text.Trim();
-                WindX    = tbWX.Text.Trim();
-                WindY    = tbWY.Text.Trim();
-            }
-            base.OnFormClosing(e);
-        }
-
-        void Sec(Panel p, string t, ref int y)
-        {
-            y += 4;
-            Label l = new Label();
-            l.Text      = t;
-            l.Font      = new System.Drawing.Font("Segoe UI",8.5f,System.Drawing.FontStyle.Bold);
-            l.ForeColor = System.Drawing.Color.FromArgb(26,79,114);
-            l.Location  = new System.Drawing.Point(0,y);
-            l.Width     = 440;
-            l.Height    = 18;
-            p.Controls.Add(l);
-            y += 20;
-        }
-
-        NumericUpDown Num(Panel p, string l, ref int y,
-                          double d, double mn, double mx, int dc)
-        {
-            Label lbl = new Label();
-            lbl.Text     = l + ":";
-            lbl.Location = new System.Drawing.Point(0,y+2);
-            lbl.Width    = 290;
-            lbl.Height   = 18;
-            p.Controls.Add(lbl);
-            NumericUpDown n = new NumericUpDown();
-            n.Value         = (decimal)Math.Max(mn,Math.Min(mx,d));
-            n.Minimum       = (decimal)mn;
-            n.Maximum       = (decimal)mx;
-            n.DecimalPlaces = dc;
-            n.Location      = new System.Drawing.Point(295,y);
-            n.Width         = 120;
-            n.Height        = 22;
-            p.Controls.Add(n);
-            y += 26;
-            return n;
-        }
-
-        ComboBox Cmb(Panel p, string l, ref int y, string[] its, int sel)
-        {
-            Label lbl = new Label();
-            lbl.Text     = l + ":";
-            lbl.Location = new System.Drawing.Point(0,y+2);
-            lbl.Width    = 150;
-            lbl.Height   = 18;
-            p.Controls.Add(lbl);
-            ComboBox cb = new ComboBox();
-            cb.DropDownStyle = ComboBoxStyle.DropDownList;
-            cb.Location      = new System.Drawing.Point(155,y);
-            cb.Width         = 260;
-            cb.Height        = 22;
-            for (int i=0;i<its.Length;i++) cb.Items.Add(its[i]);
-            cb.SelectedIndex = sel;
-            p.Controls.Add(cb);
-            y += 26;
-            return cb;
-        }
-
-        TextBox Txt(Panel p, string l, ref int y, string d)
-        {
-            Label lbl = new Label();
-            lbl.Text     = l + ":";
-            lbl.Location = new System.Drawing.Point(0,y+2);
-            lbl.Width    = 200;
-            lbl.Height   = 18;
-            p.Controls.Add(lbl);
-            TextBox tb = new TextBox();
-            tb.Text     = d;
-            tb.Location = new System.Drawing.Point(205,y);
-            tb.Width    = 210;
-            tb.Height   = 22;
-            p.Controls.Add(tb);
-            y += 26;
-            return tb;
-        }
-    }
-}
+            ok.For
