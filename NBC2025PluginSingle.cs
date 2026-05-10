@@ -1,5 +1,3 @@
-// NBC2025Plugin - ETABS 19 - NBC 105:2025
-// All API calls verified from ETABSv1.dll
 using System;
 using System.Windows.Forms;
 using ETABSv1;
@@ -105,66 +103,3 @@ namespace NBC2025Plugin
                     "  Cs(T) = " + CsT.ToString("F4")   + "\n\n" +
                     "DESIGN COEFFICIENTS\n" +
                     "  Cd_ULS = " + CdULS.ToString("F5") + "\n" +
-                    "  Cd_SLS = " + CdSLS.ToString("F5") + "\n" +
-                    "  kd     = " + kd.ToString("F2")    + "\n\n" +
-                    "BASE SHEAR\n" +
-                    "  V_ULS = " + VULS.ToString("F1")   + " kN\n" +
-                    "  V_SLS = " + VSLS.ToString("F1")   + " kN\n\n" +
-                    "CREATED IN ETABS\n" +
-                    "  Patterns : EQX EQY EQX_SLS EQY_SLS\n" +
-                    "  RS Funcs : NBC2025_ULS NBC2025_SLS\n" +
-                    "  RS Cases : RSX RSY\n" +
-                    "  Combos   : 40 combinations\n\n" +
-                    "Please re-run analysis.",
-                    "NBC 105:2025 - Done",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error:\n" + ex.Message,
-                    "NBC 2025 Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        void GetSpectral(string soil, out double Ta, out double Tc,
-                         out double Td, out double alpha, out double k)
-        {
-            switch (soil.ToUpper())
-            {
-                case "A": Ta=0.1;Tc=0.4;Td=4.0;alpha=2.50;k=1.8;break;
-                case "B": Ta=0.1;Tc=0.5;Td=4.0;alpha=2.50;k=1.8;break;
-                case "C": Ta=0.1;Tc=0.7;Td=4.0;alpha=2.50;k=1.8;break;
-                default:  Ta=0.1;Tc=0.9;Td=5.0;alpha=2.25;k=1.8;break;
-            }
-        }
-
-        double CalcCh(double T, double Tc, double Td, double alpha, double k)
-        {
-            if (T <= Tc)      return alpha;
-            else if (T <= Td) return alpha * Math.Pow(Tc/T, k);
-            else              return alpha * Math.Pow(Tc/Td, k) * Math.Pow(Td/T, 2.0);
-        }
-
-        double GetKd(int n)
-        {
-            if (n<=1) return 1.00;
-            if (n==2) return 0.97;
-            if (n==3) return 0.94;
-            if (n==4) return 0.91;
-            if (n==5) return 0.88;
-            return 0.85;
-        }
-
-        double[][] BuildSpectrum(double Z, double I, double Rmu, double OmegaU,
-                                  double Tc, double Td, double alpha, double k)
-        {
-            double[] Tv = {0.0,0.05,0.10,0.15,0.20,0.25,0.30,0.40,0.50,
-                           0.60,0.70,0.80,0.90,1.00,1.20,1.40,1.60,1.80,
-                           2.00,2.50,3.00,3.50,4.00,4.50,Td,Td+0.1,6.0,8.0,10.0};
-            double[] Sv = new double[Tv.Length];
-            for (int i=0;i<Tv.Length;i++)
-                Sv[i] = CalcCh(Tv[i],Tc,Td,alpha,k)*Z*I/(Rmu*OmegaU);
-            return new double[][]{Tv,Sv};
-        }
-
-        void MakePat(string name, eLoadP
