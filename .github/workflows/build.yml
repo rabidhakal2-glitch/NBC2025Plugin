@@ -7,11 +7,19 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        lfs: true
+
+    - name: Check files
+      shell: cmd
+      run: dir
 
     - name: Compile DLL
       shell: cmd
       run: |
-        "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /target:library /optimize+ /out:NBC2025Plugin.dll /reference:ETABSv1.dll /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Drawing.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll" NBC2025PluginSingle.cs
+        set CSC=C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe
+        "%CSC%" /target:library /optimize+ /out:NBC2025Plugin.dll /reference:ETABSv1.dll /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Drawing.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll" NBC2025PluginSingle.cs
+        if exist NBC2025Plugin.dll (echo SUCCESS) else (echo FAILED && exit /b 1)
 
     - name: Upload DLL
       uses: actions/upload-artifact@v4
