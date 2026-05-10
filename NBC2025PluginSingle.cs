@@ -4,7 +4,7 @@ using ETABSv1;
 
 namespace NBC2025Plugin
 {
-    public class NBC2025Plugin
+    public class cPlugin
     {
         private cSapModel _m;
 
