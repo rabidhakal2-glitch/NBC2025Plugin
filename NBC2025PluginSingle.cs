@@ -8,13 +8,17 @@ namespace NBC2025Plugin
     {
         private cSapModel _m;
 
-        public void Run(cSapModel SapModel)
+        public int Main(ref cSapModel SapModel, ref cPluginCallback ISapPlugin)
         {
             _m = SapModel;
             try
             {
                 var frm = new InputForm();
-                if (frm.ShowDialog() != DialogResult.OK) return;
+                if (frm.ShowDialog() != DialogResult.OK)
+                {
+                    ISapPlugin.Finish(0);
+                    return 0;
+                }
 
                 double H      = frm.H;
                 double Z      = frm.Z;
@@ -76,6 +80,9 @@ namespace NBC2025Plugin
             {
                 MessageBox.Show("Error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            ISapPlugin.Finish(0);
+            return 0;
         }
 
         void GetSpectral(string soil, out double Ta, out double Tc,
