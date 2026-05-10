@@ -4,43 +4,19 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: List files
-      shell: cmd
-      run: dir
+    - uses: actions/checkout@v3
 
     - name: Compile DLL
       shell: cmd
       run: |
-        if not exist ETABSv1.dll (
-          echo ERROR - ETABSv1.dll not found in repo
-          dir
-          exit /b 1
-        )
-        echo ETABSv1.dll found - compiling...
-        "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" ^
-          /target:library ^
-          /optimize+ ^
-          /out:NBC2025Plugin.dll ^
-          /reference:ETABSv1.dll ^
-          /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll" ^
-          /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Drawing.dll" ^
-          /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll" ^
-          NBC2025PluginSingle.cs
-        if exist NBC2025Plugin.dll (
-          echo SUCCESS - DLL created!
-        ) else (
-          echo FAILED - DLL not created
-          exit /b 1
-        )
+        "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /target:library /optimize+ /out:NBC2025Plugin.dll /reference:ETABSv1.dll /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Drawing.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll" NBC2025PluginSingle.cs
 
     - name: Upload DLL
       uses: actions/upload-artifact@v3
       with:
         name: NBC2025Plugin-DLL
         path: NBC2025Plugin.dll
+        retention-days: 30
