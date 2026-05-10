@@ -2,17 +2,34 @@ name: Build DLL
 
 on: [push, workflow_dispatch]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: List all files
+      shell: cmd
+      run: |
+        echo === FILES IN REPO ===
+        dir /s /b
 
     - name: Compile DLL
       shell: cmd
       run: |
+        if not exist ETABSv1.dll (
+          echo ETABSv1.dll NOT FOUND - looking for it...
+          dir /s /b *.dll
+          exit /b 1
+        )
+        echo ETABSv1.dll FOUND - starting compile...
         "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe" /target:library /optimize+ /out:NBC2025Plugin.dll /reference:ETABSv1.dll /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Windows.Forms.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.Drawing.dll" /reference:"C:\Windows\Microsoft.NET\Framework64\v4.0.30319\System.dll" NBC2025PluginSingle.cs
+        if exist NBC2025Plugin.dll (echo DLL CREATED OK) else (echo DLL FAILED && exit /b 1)
 
     - name: Upload DLL
       uses: actions/upload-artifact@v4
